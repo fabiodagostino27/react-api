@@ -1,6 +1,19 @@
 import { TableRow } from "./TableRow";
+import { useState, useEffect } from "react";
 
 export const Main = () => {
+
+    const [posts, setPosts] = useState([]);
+
+    const fetchPosts = () => {
+        fetch("http://localhost:3000/posts/api")
+            .then((res) => res.json())
+            .then(data => setPosts(data))
+            .catch(error => console.error(error))
+    };
+
+    useEffect(fetchPosts, []);
+
     return (
         <main className="container">
             <table className="table">
@@ -13,7 +26,9 @@ export const Main = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <TableRow />
+                    {
+                        posts.map(p => <TableRow key={p.id} p={p} />)
+                    }
                 </tbody>
             </table>
         </main>
