@@ -1,9 +1,20 @@
+import { Form } from "./Form";
 import { TableRow } from "./TableRow";
 import { useState, useEffect } from "react";
 
 export const Main = () => {
     const endpoint = "http://localhost:3000/posts/api";    
     const [posts, setPosts] = useState([]);
+    
+    const emptyPost = {
+        id:"",
+        title: "",
+        content: "",
+        image: "",
+        tags: []
+    }
+    
+    const [formData, setFormData] = useState(emptyPost);
 
     const fetchPosts = () => {
         fetch(endpoint)
@@ -13,15 +24,31 @@ export const Main = () => {
     };
 
     const deletePost = (postId) => {
-        fetch(endpoint + "/" + postId, {method: "DELETE"})
+        fetch(endpoint + "/" + postId, {method: "DELETE" })
             .then(fetchPosts)
             .catch(err => console.error(err))
     };
+
+    const addPost = (e) => {
+        e.preventDefault();
+        console.log(formData)
+
+        fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(fetchPosts)
+    }
     
     useEffect(fetchPosts, []);
 
     return (
         <main className="container">
+            <Form emptyPost={emptyPost} formData={formData} setFormData={setFormData} addPost={addPost} />
+
             <h2>Post</h2>
             <table className="table table-striped-columns">
                 <thead>
